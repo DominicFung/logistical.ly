@@ -1,10 +1,20 @@
-# Getting Started with Create React App
+# Logistical.ly ![version]
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<img src="https://github.com/DominicFung/logistical.ly/blob/master/src/img/logo_200x200.png?raw=true" align="right"
+     alt="Loggistical.ly logo by Dom Fung" width="150" height="150">
 
-## Available Scripts
+Logistical.ly is a small desktop app built with Electron & React. Problem: Given an indeterminate number of courier companies, routes and prices, find the optimal one. There's nothing too special about the backend - just some simple sorts!
 
-In the project directory, you can run:
+[version]:       https://img.shields.io/badge/version-0.1-green
 
-### `npm run dev`
-This will run the development environment on localhost:3000
+# Getting Started
+
+```sh
+npm install
+```
+
+```sh
+npm run dev
+```
+<img src="https://github.com/DominicFung/logistical.ly/blob/master/src/img/screen-shot.png?raw=true" align="center"
+     alt="Screenshot of Logistical.ly" width="1919" height="1055">
