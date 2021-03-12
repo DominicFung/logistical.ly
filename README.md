@@ -16,5 +16,7 @@ npm install
 ```sh
 npm run dev
 ```
+<p align="center">
 <img src="https://github.com/DominicFung/logistical.ly/blob/master/src/img/screen-shot.png?raw=true" align="center"
-     alt="Screenshot of Logistical.ly" width="1919" height="1055">
+     alt="Screenshot of Logistical.ly" width="830" height="456">
+</p>
