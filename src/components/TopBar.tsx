@@ -34,10 +34,14 @@ export interface DenseAppBarProps {
   goToCapacity: () => void
   goToSettings: () => void
   goToAbout: () => void
+
+  showPrice: boolean
+  showCapacity: boolean
 }
 
 export default function DenseAppBar({
-    page, goToHome, goToCapacity, goToSettings, goToAbout
+    page, goToHome, goToCapacity, goToSettings, goToAbout,
+    showPrice, showCapacity
 }: DenseAppBarProps) {
   const classes = useStyles()
 
@@ -62,6 +66,7 @@ export default function DenseAppBar({
             className={classes.button}
             startIcon={<EditIcon />}
             onClick={ goToCapacity }
+            disabled={!showCapacity}
           >
             Capacity
           </Button>
@@ -71,6 +76,7 @@ export default function DenseAppBar({
             size="small"
             className={classes.button}
             startIcon={<EditIcon />}
+            disabled={!showPrice}
           >
             Prices
           </Button>

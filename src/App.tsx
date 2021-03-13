@@ -21,23 +21,29 @@ const mainTheme = createMuiTheme({
 function App() {
   const [page, setPage] = useState("Home")
 
-  const goToHome = () => {
-    setPage("Home")
-  }
-  const goToCapacity = () => {
-    setPage("Capacity")
-  }
-  const goToSettings = () => {
-    setPage("Settings")
-  }
-  const goToAbout = () => {
-    setPage("About")
-  }
+  //const [data, setData] = useState<data[]>([])
+
+  const [price, setPrice] = useState<string>("")
+  const [capacity, setCapacity] = useState<string>("")
+  const [maxCap, setMaxCap] = useState<string>("")
+  const [request, setRequest] = useState<string>("")
+
+  const goToHome = () => { setPage("Home") }
+  const goToCapacity = () => { setPage("Capacity") }
+  const goToSettings = () => { setPage("Settings") }
+  const goToAbout = () => { setPage("About") }
+
+  const pushPrice = (s: string) => { setPrice(s) }
+  const pushCapacity = (s: string) => { setCapacity(s) }
+  const pushMaxCap = (s: string) => { setMaxCap(s) }
+  const pushRequest = (s: string) => { setRequest(s) }
 
   return (
     <MuiThemeProvider theme={mainTheme}>
       <TopBar page={page} goToHome={goToHome} 
         goToCapacity={goToCapacity} goToSettings={goToSettings} goToAbout={goToAbout}
+
+        showPrice={price != ""} showCapacity={capacity != ""}
       />
       <div>
         <Fade in={page === "Home"}>
@@ -46,7 +52,9 @@ function App() {
             display: page === "Home"?"":"None",
             height: page !== "Home"?0:"auto"
           }}>
-            <Home page={page} />
+            <Home page={page} goToSettings={goToSettings}
+              price={price} capacity={capacity} maxCap={maxCap} request={request}
+            />
           </div>
         </Fade>
         <Fade in={page === "Capacity"}>
@@ -55,7 +63,16 @@ function App() {
             display: page === "Capacity"?"":"None",
             height: page !== "Capacity"?0:"auto"
           }}>
-            <DenseTable page={page} data={[]} />
+            <DenseTable page={"Capacity"} data={[]} />
+          </div>
+        </Fade>
+        <Fade in={page === "Price"}>
+          <div style={{
+            visibility: page === "Price"?"visible":"hidden",
+            display: page === "Price"?"":"None",
+            height: page !== "Price"?0:"auto"
+          }}>
+            <DenseTable page={"Price"} data={[]} />
           </div>
         </Fade>
         <Fade in={page === "Settings"}>
@@ -64,7 +81,10 @@ function App() {
             display: page === "Settings"?"":"None",
             height: page !== "Settings"?0:"auto"
           }}>
-            <Settings page={page} />
+            <Settings page={page} goToHome={goToHome}
+              pushPrice={pushPrice} pushCapacity={pushCapacity} 
+              pushMaxCap={pushMaxCap} pushRequest={pushRequest}
+            />
           </div>
         </Fade>
         <Fade in={page === "About"}>

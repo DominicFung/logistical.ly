@@ -63,7 +63,7 @@ export default function About({ page }: AboutProps) {
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <div className={classes.logoBlock}>
-              <img src={logo} alt="Logistical.ly" style={{width: 200, height: 200}} />
+              <img src={logo} alt="Logistical.ly" style={{width: 160, height: 160}} />
             </div>
             <Typography variant="subtitle1" align="center" color="textSecondary" paragraph>
               This app was built using Typescript, React and Electron! <br />
