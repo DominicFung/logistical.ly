@@ -5,7 +5,7 @@ import { Grid, Drawer, Container, Typography, Button, Paper } from '@material-ui
 
 import logo from '../img/logo_200x200.png'
 import { csvReader } from '../logistics/reader';
-import { logistic } from '../logistics/logistic';
+import { logistic, logistic2 } from '../logistics/logistic';
 
 import LogConsole from './homeComponents/LogConsole'
 
@@ -54,6 +54,28 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
 
+    mainForDrawerOpen: {
+      height: `calc(100% - ${drawerOpenHeight}px)`,
+      [theme.breakpoints.up('sm')]: {
+        height: `calc(100% - ${drawerOpenHeight}px)`, //drawerCloseHeight
+      },
+      overflowY: 'hidden',
+      transition: theme.transitions.create(['height', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    mainForDrawerClose: {
+      transition: theme.transitions.create(['height', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      overflowY: 'hidden',
+      height: `calc(100% - ${drawerCloseHeight}px)`, //drawerCloseHeight
+      [theme.breakpoints.up('sm')]: {
+        height: `calc(100% - ${drawerCloseHeight}px)`, //drawerCloseHeight
+      },
+    }
 
   }),
 );
@@ -99,15 +121,30 @@ export default function Home({
       let maxCapObj = JSON.parse(maxCap)
       let requestObj = JSON.parse(request)
 
+      let answer2 = logistic2(legend, requestObj, maxCapObj)
+      console.log(answer2)
+
+      // RESET
+      legend = csvReader(price, capacity)
+      maxCapObj = JSON.parse(maxCap)
+      requestObj = JSON.parse(request)
+
       let answer = logistic(legend, requestObj, maxCapObj)
       console.log(answer)
-      setMinPrice( answer.minPrice )
+
+      setMinPrice( answer.minPrice < answer2.minPrice ? answer.minPrice : answer2.minPrice )
     }
   }
 
   return (
-    <div>
-      <Grid container style={{width:'100%'}}>
+    <div style={{height: height}}>
+      <Grid container 
+        className={openDrawer?classes.mainForDrawerOpen:classes.mainForDrawerClose}
+        style={{
+          width:'100%', 
+          //height: height-(openDrawer?drawerOpenHeight:drawerCloseHeight), 
+          overflowY: "auto"
+        }}>
         <Grid item xs={12}>
           <div className={classes.heroContent}>
             <Container maxWidth="sm">

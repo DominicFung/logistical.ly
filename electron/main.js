@@ -8,7 +8,12 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width:800,
         height:600,
-        show: false
+        show: false,
+        webPreferences: {
+          nodeIntegration: true,
+          preload: `${__dirname}/preload.js`,
+          webSecurity: false 
+        }
     });
     const startURL = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`;
  

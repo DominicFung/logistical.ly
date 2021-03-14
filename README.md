@@ -20,3 +20,16 @@ npm run dev
 <img src="https://github.com/DominicFung/logistical.ly/blob/master/src/img/screen-shot.png?raw=true" align="center"
      alt="Screenshot of Logistical.ly" width="830" height="456">
 </p>
+
+## To Build:
+```sh
+npm run build
+```
+
+```sh
+npm run build-electron
+```
+
+```sh
+npm run package
+```

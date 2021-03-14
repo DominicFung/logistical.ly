@@ -5,7 +5,10 @@ import { Grid, Container, Typography, IconButton } from '@material-ui/core'
 import logo from '../img/domlogo_200x200.png'
 
 import LinkedInIcon from '@material-ui/icons/LinkedIn'
+import GitHubIcon from '@material-ui/icons/GitHub'
 import MailIcon from '@material-ui/icons/Mail'
+
+//import { shell } from 'electron'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -75,10 +78,28 @@ export default function About({ page }: AboutProps) {
               My language of choice is Javascript/Typescript.<br />
             </Typography>
             <div className={classes.logoBlock} style={{paddingTop: 0}}>
-              <IconButton className={classes.heroButtons}>
+              <IconButton className={classes.heroButtons}
+                onClick={() => { 
+                  //(window as any).shell.openExternal("https://www.linkedin.com/in/dominicchichunfung/")
+                  window.open("https://www.linkedin.com/in/dominicchichunfung/")
+                }}
+              >
                 <LinkedInIcon className={classes.heroButtonsIcons} style={{color: "#2867B2"}}/>
               </IconButton>
-              <IconButton className={classes.heroButtons}>
+              <IconButton className={classes.heroButtons}
+                onClick={() => { 
+                  //(window as any).shell.openExternal("https://www.linkedin.com/in/dominicchichunfung/")
+                  window.open("https://github.com/DominicFung")
+                }}
+              >
+                <GitHubIcon className={classes.heroButtonsIcons} style={{color: "#333"}}/>
+              </IconButton>
+              <IconButton className={classes.heroButtons}
+                onClick={() => { 
+                  //(window as any).shell.openExternal("https://www.linkedin.com/in/dominicchichunfung/")
+                  window.open("mailto:dominic.fung@icloud.com")
+                }}
+              >
                 <MailIcon className={classes.heroButtonsIcons} style={{color: "#e3c12b"}}/>
               </IconButton>
             </div>

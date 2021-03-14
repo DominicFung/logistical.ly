@@ -57,6 +57,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const drawerCloseHeight = 28
 const drawerOpenHeight = 300
+const scrollbarheight = 12
+
+const logConsoleId = 'log-console-screen'
+
 export interface LogConsoleProps {
   openDrawer: () => void, 
   closeDrawer: () => void
@@ -66,28 +70,55 @@ export default function LogConsole({
   openDrawer, closeDrawer
 }: LogConsoleProps) {
   const classes = useStyles()
+
   const [logs, setLogs] = React.useState<{log: string, level: string}[]>([])
+  const [overFlowAdjust, setOverFlowAdjust] = React.useState(0)
 
   useEffect(() => {
     const listener = (e: any) => {
       console.log(e.detail.log)
       logs.push(e.detail)
       setLogs([...logs])
+
+      let el = document.getElementById(logConsoleId)
+      if (el && checkOverflow(el)) {
+        console.log("Theres overflow!")
+        if ( overFlowAdjust === 0 ) setOverFlowAdjust(scrollbarheight)
+      } else {
+        if (overFlowAdjust === scrollbarheight) setOverFlowAdjust(0)
+      }
     }
 
     document.body.addEventListener('logistic-log', listener)
     return () => document.body.removeEventListener('logistic-log', listener)
-  })
+  }, [])
+
+  const checkOverflow = (el: HTMLElement) => {
+    var curOverflow = el.style.overflow;
+
+    if ( !curOverflow || curOverflow === "visible" )
+        el.style.overflow = "hidden";
+
+    var isOverflowing = el.clientWidth < el.scrollWidth 
+        || el.clientHeight < el.scrollHeight;
+
+    el.style.overflow = curOverflow;
+
+    return isOverflowing;
+  }
 
   return (
-    <Paper className={classes.root}>
+    <Paper className={classes.root} style={{}}>
       <Paper className={classes.logBar}>
         <span className={classes.logBarTitle}>log console</span>
         <div style={{flexGrow: 1}}/>
         <MinimizeIcon onClick={ closeDrawer } className={classes.logBarButtons}/>
         <MaximizeIcon onClick={ openDrawer } className={classes.logBarButtons} style={{marginRight: 2}}/>
       </Paper>
-      <Paper style={{height: drawerOpenHeight-drawerCloseHeight, overflowY: "auto", paddingTop: 12}}>
+      <Paper style={{
+          height: drawerOpenHeight-drawerCloseHeight-12-overFlowAdjust, 
+          overflow: "auto", paddingTop: 12
+        }} id={logConsoleId}>
         {logs.length === 0 ?
           <p className={classes.logItem}>Please make a run ...</p>:
         logs.map((item) => {
