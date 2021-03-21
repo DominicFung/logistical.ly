@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const drawerCloseHeight = 28
 const drawerOpenHeight = 300
-const scrollbarheight = 12
+const scrollbarheight = 0
 
 const logConsoleId = 'log-console-screen'
 
