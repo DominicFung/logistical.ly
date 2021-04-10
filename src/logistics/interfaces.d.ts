@@ -6,6 +6,13 @@ interface data {
   allocation?: number
 }
 
+interface rowData {
+  lane: string,
+  companies: {
+    [company: string]: string
+  }
+}
+
 interface item {
   price: number,
   capacity: number

@@ -76,13 +76,11 @@ export default function LogConsole({
 
   useEffect(() => {
     const listener = (e: any) => {
-      console.log(e.detail.log)
       logs.push(e.detail)
       setLogs([...logs])
 
       let el = document.getElementById(logConsoleId)
       if (el && checkOverflow(el)) {
-        console.log("Theres overflow!")
         if ( overFlowAdjust === 0 ) setOverFlowAdjust(scrollbarheight)
       } else {
         if (overFlowAdjust === scrollbarheight) setOverFlowAdjust(0)
@@ -125,10 +123,11 @@ export default function LogConsole({
 
           let color = "black"
           if (item.level === "ANSWER") color = "green"
-          else if (item.level === "WARN") color = "red"
+          else if (item.level === "WARN") color = "orange"
+          else if (item.level === "ERROR") color = "red"
 
           let fontWeight = 400
-          if (item.level === "ANSWER") fontWeight = 700
+          if (item.level === "ANSWER" || item.level === "ERROR") fontWeight = 700
 
           return <p 
             key={Math.floor(Math.random()*9999999)} className={classes.logItem}

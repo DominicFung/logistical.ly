@@ -1,5 +1,6 @@
 {
-  "name": "can-tire-logistics-v2",
+  "name": "logistical.ly",
+  "author": "Dom Fung",
   "homepage": "./",
   "main": "./electron/main.js",
   "version": "0.1.0",
@@ -22,14 +23,19 @@
     "web-vitals": "^1.1.0"
   },
   "build": {
+    "appId": "com.logistically",
     "files": [
       "build/**/*",
-      "node_modules/**/*"
+      "node_modules/**/*",
+      "build/icons/icon.*"
     ],
     "publish": {
       "provider": "github",
       "repo": "logistical.ly",
       "owner": "dominicfung"
+    },
+    "directories": {
+      "buildResources": "build"
     }
   },
   "scripts": {
@@ -39,8 +45,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build-electron": "mkdir -p build/src && cp -r electron/. build/electron && cp -r src/img/. build/src/img",
-    "package": "electron-builder build --mac --win -c.extraMetadata.main=build/electron/main.js --publish never"
+    "build-electron": "mkdir -p build/src && cp -r src/img/. build/src/img && cp -r src/icons/. build/",
+    "package": "electron-builder build --mac --win --publish never"
   },
   "eslintConfig": {
     "extends": [

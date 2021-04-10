@@ -4,8 +4,8 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Grid, Drawer, Container, Typography, Button, Paper } from '@material-ui/core'
 
 import logo from '../img/logo_200x200.png'
-import { csvReader } from '../logistics/reader';
-import { logistic, logistic2 } from '../logistics/logistic';
+import { csvReader, csvReader2 } from '../logistics/reader';
+import { logistic, logistic2, error as logError } from '../logistics/logistic';
 
 import LogConsole from './homeComponents/LogConsole'
 
@@ -88,8 +88,8 @@ export interface HomeProps {
   page: String,
   goToSettings: () => void
 
-  price: string
-  capacity: string
+  price: rowData[] // was string
+  capacity: rowData[] // was string
   maxCap: string
   request: string
 }
@@ -117,7 +117,8 @@ export default function Home({
     if (price && capacity && maxCap && request) {
       setOpenDrawer(true)
 
-      let legend = csvReader(price, capacity)
+      //let legend = csvReader(price, capacity)
+      let legend = csvReader2(price, capacity)
       let maxCapObj = JSON.parse(maxCap)
       let requestObj = JSON.parse(request)
 
@@ -125,14 +126,19 @@ export default function Home({
       console.log(answer2)
 
       // RESET
-      legend = csvReader(price, capacity)
+      //legend = csvReader(price, capacity)
+      legend = csvReader2(price, capacity)
       maxCapObj = JSON.parse(maxCap)
       requestObj = JSON.parse(request)
 
       let answer = logistic(legend, requestObj, maxCapObj)
       console.log(answer)
 
-      setMinPrice( answer.minPrice < answer2.minPrice ? answer.minPrice : answer2.minPrice )
+      if (answer2 && answer)
+        setMinPrice( answer.minPrice < answer2.minPrice ? answer.minPrice : answer2.minPrice )
+      else if (answer2) setMinPrice(answer2.minPrice)
+      else if (answer) setMinPrice(answer.minPrice)
+      else { logError(`No solution found for either logistic algorithms.`) }
     }
   }
 
@@ -159,7 +165,7 @@ export default function Home({
                 <Grid container spacing={2} justify="center">
                   <Grid item>
                     <Button variant="contained" color="primary" 
-                      disabled={price === "" || capacity === "" || maxCap === "" || request === ""}
+                      disabled={price.length === 0 || capacity.length === 0 || maxCap === "" || request === ""}
                       onClick={runLogistic}
                     >
                       Calculate!

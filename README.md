@@ -26,6 +26,7 @@ npm run dev
 npm run build
 ```
 
+Run the following if icon or images change.
 ```sh
 npm run build-electron
 ```

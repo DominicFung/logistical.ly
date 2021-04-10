@@ -1,4 +1,4 @@
-export function logistic2 (sorted: data[], request: any, maxCapacity: any): { minPrice: number, sortedLane: {[key: string]: data[]} } {
+export function logistic2 (sorted: data[], request: any, maxCapacity: any): { minPrice: number, sortedLane: {[key: string]: data[]} }|null {
   log("Logistics v2 start ... sorting")
 
   // NOTE: for a more optimal solution,
@@ -29,15 +29,23 @@ export function logistic2 (sorted: data[], request: any, maxCapacity: any): { mi
         maxCapacityTracker[item.company] = maxCapacityTracker[item.company] - item.allocation
         capacityTracker[item.lane] = capacityTracker[item.lane] - item.allocation
         minPrice = minPrice + item.price * item.allocation
-      } else { warn(`capacityTracker[${item.lane}] or maxCapacity[${item.company}] doesn't exist!`) }
+      } else { 
+        warn(`capacityTracker[${item.lane}] or maxCapacity[${item.company}] is not >= 0!`) 
+      }
     } 
   }
 
   log(JSON.stringify(sortedLane))
   log(JSON.stringify(minPrice))
 
-  answer(`V2 Minimum Price = ${minPrice}`)
-  return { minPrice, sortedLane }
+  let errorLane = checkSolved(capacityTracker)
+  if (errorLane) {
+    error(`Not all lanes were allocated! Please check lane "${errorLane}"`)
+    return null
+  } else {
+    answer(`V2 Minimum Price = ${minPrice}`)
+    return { minPrice, sortedLane }
+  }
 }
 
 
@@ -48,7 +56,7 @@ export function logistic2 (sorted: data[], request: any, maxCapacity: any): { mi
   * 
   * @return {number}
   */
-export function logistic (sorted: data[], request: any, maxCapacity: any): { minPrice: number, sorted: data[] } {
+export function logistic (sorted: data[], request: any, maxCapacity: any): { minPrice: number, sorted: data[] }|null {
   log("Logistics v1 start ... sorting")
 
   let capacityTracker = request
@@ -74,45 +82,56 @@ export function logistic (sorted: data[], request: any, maxCapacity: any): { min
   log(JSON.stringify(capacityTracker))
   log(JSON.stringify(maxCapacityTracker))
 
-  log("\n -- BACKTRACKING -- ")
+  console.log(maxCapacityTracker)
+  console.log(capacityTracker)
 
-  /**
-   * Backtracking:
-   *  - For each lane, Check to see if the request is statisfied: ie. outstanding capacity lane = 0
-   *  - If NOT - recursively make alterations until:
-   *      a) max Capacity per company is not violated
-   *      b) all lanes are equal
-   */
-  let isSolved = false
-  for (let lane of Object.keys(capacityTracker)) {
-    if (capacityTracker[lane] > 0) {
-      for (let i=0; i<sorted.length; i++) {
-        if (sorted[i].lane === lane) {
-          if (i === 0) throw ("We cannot handle i === 0 yet.")
-          let temp = modify(sorted, maxCapacityTracker, capacityTracker, i-1, i, "lane", lane, minPrice)
-          if (temp) {
-            sorted = temp.sorted
-            capacityTracker = temp.laneT
-            maxCapacityTracker = temp.companyMaxT
-            minPrice = temp.price
+  if (!checkSolved(capacityTracker)) {
+    answer(`V1 Minimum Price = ${minPrice}`)
+    return { minPrice, sorted }
+  } else {
+    log("\n -- BACKTRACKING -- ")
 
-            isSolved = true
-            break; // I think the entire thing is solved if modify returns?
+    /**
+     * Backtracking:
+     *  - For each lane, Check to see if the request is statisfied: ie. outstanding capacity lane = 0
+     *  - If NOT - recursively make alterations until:
+     *      a) max Capacity per company is not violated
+     *      b) all lanes are equal
+     */
+    let isSolved = false
+    for (let lane of Object.keys(capacityTracker)) {
+      if (capacityTracker[lane] > 0) {
+        for (let i=0; i<sorted.length; i++) {
+          if (sorted[i].lane === lane) {
+            if (i === 0) throw ("We cannot handle i === 0 yet.")
+            let temp = modify(sorted, maxCapacityTracker, capacityTracker, i-1, i, "lane", lane, minPrice)
+            if (temp) {
+              sorted = temp.sorted
+              capacityTracker = temp.laneT
+              maxCapacityTracker = temp.companyMaxT
+              minPrice = temp.price
 
-          } else console.warn(`Could not solve at i = ${i}.`)
+              isSolved = true
+              break; // I think the entire thing is solved if modify returns?
+
+            } else console.warn(`Could not solve at i = ${i}.`)
+          }
         }
       }
     }
+
+    console.log(maxCapacityTracker)
+    console.log(capacityTracker)
+
+    let errorLane = checkSolved(capacityTracker)
+    if (errorLane) {
+      error(`Not all lanes were allocated! Please check lane "${errorLane}"`)
+      return null
+    } else {
+      answer(`V1 Minimum Price = ${minPrice}`)
+      return { minPrice, sorted }
+    }
   }
-
-  //TODO is solved
-
-  
-  //if (isSolved) return { sorted, minPrice }
-  //else return null
-
-  answer(`V1 Minimum Price = ${minPrice}`)
-  return { minPrice, sorted }
  }
 
  /**
@@ -268,9 +287,17 @@ function log(logMsg: string) {
   document.body.dispatchEvent(event)
 }
 
-function warn(logMsg: string) {
+export function warn(logMsg: string) {
   const event = new CustomEvent('logistic-log', {
     detail: {log: logMsg, level: "WARN"}
+  })
+  console.warn(logMsg)
+  document.body.dispatchEvent(event)
+}
+
+export function error(logMsg: string) {
+  const event = new CustomEvent('logistic-log', {
+    detail: {log: logMsg, level: "ERROR"}
   })
   console.warn(logMsg)
   document.body.dispatchEvent(event)
@@ -282,4 +309,18 @@ function answer(logMsg: string) {
   })
   console.log(logMsg)
   document.body.dispatchEvent(event)
+}
+
+/**
+ * 
+ * @param laneTracker 
+ * @returns null if everything is OK.
+ *      Returns the string lane if not OK
+ */
+function checkSolved(laneTracker: {[lane: string]: number} ): null|string {
+  let lanes = Object.keys(laneTracker)
+  for (let lane of lanes) {
+    if (laneTracker[lane] !== 0) return lane
+  }
+  return null
 }

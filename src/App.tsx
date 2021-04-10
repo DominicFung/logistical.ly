@@ -4,6 +4,7 @@ import { MuiThemeProvider, createMuiTheme, makeStyles } from '@material-ui/core/
 import { Fade } from '@material-ui/core'
 
 import './App.css'
+import { csvToRowData } from './logistics/reader'
 
 import TopBar from './components/TopBar'
 import Home from './components/Home'
@@ -28,8 +29,24 @@ function App() {
   const [maxCap, setMaxCap] = useState<string>("")
   const [request, setRequest] = useState<string>("")
 
+  const [priceRows, setPriceRows] = useState<rowData[]>([])
+  const [capacityRows, setCapacityRows] = useState<rowData[]>([])
+
+  useEffect(() => {
+    console.log("setting price rows ..")
+    let tempPrice = csvToRowData(price)
+    console.log(tempPrice)
+    setPriceRows( tempPrice )
+  }, [price])
+
+  useEffect(() => {
+    
+    setCapacityRows( csvToRowData(capacity) )
+  }, [capacity])
+
   const goToHome = () => { setPage("Home") }
   const goToCapacity = () => { setPage("Capacity") }
+  const goToPrices = () => { setPage("Price") }
   const goToSettings = () => { setPage("Settings") }
   const goToAbout = () => { setPage("About") }
 
@@ -41,7 +58,7 @@ function App() {
   return (
     <MuiThemeProvider theme={mainTheme}>
       <TopBar page={page} goToHome={goToHome} 
-        goToCapacity={goToCapacity} goToSettings={goToSettings} goToAbout={goToAbout}
+        goToCapacity={goToCapacity} goToSettings={goToSettings} goToAbout={goToAbout} goToPrices={goToPrices}
 
         showPrice={price != ""} showCapacity={capacity != ""}
       />
@@ -53,7 +70,7 @@ function App() {
             height: page !== "Home"?0:"auto"
           }}>
             <Home page={page} goToSettings={goToSettings}
-              price={price} capacity={capacity} maxCap={maxCap} request={request}
+              price={priceRows} capacity={capacityRows} maxCap={maxCap} request={request}
             />
           </div>
         </Fade>
@@ -63,7 +80,7 @@ function App() {
             display: page === "Capacity"?"":"None",
             height: page !== "Capacity"?0:"auto"
           }}>
-            <DenseTable page={"Capacity"} data={[]} />
+            <DenseTable page={"Capacity"} rows={capacityRows} updateRows={ (rows) => { setCapacityRows([...rows]) } }/>
           </div>
         </Fade>
         <Fade in={page === "Price"}>
@@ -72,7 +89,7 @@ function App() {
             display: page === "Price"?"":"None",
             height: page !== "Price"?0:"auto"
           }}>
-            <DenseTable page={"Price"} data={[]} />
+            <DenseTable page={"Price"} rows={priceRows} updateRows={ (rows) => { setPriceRows([...rows]) } } />
           </div>
         </Fade>
         <Fade in={page === "Settings"}>

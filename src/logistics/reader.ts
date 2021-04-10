@@ -1,3 +1,5 @@
+import { warn as logWarn, error as logError } from './logistic'
+
 const _PRICESCSVNAME = "prices.csv"
 const _CAPACITYCSVNAME = "capacity.csv"
 
@@ -5,10 +7,66 @@ const _NULLVALS = [ "NA", "" ]
 
 /**
  * 
+ * @param price 
+ * @param capacity 
+ */
+export function csvReader2(prices: rowData[], capacities: rowData[]): data[] {
+
+  if (prices.length === 0 || capacities.length === 0) {
+    logError(`There is no data in either ${_PRICESCSVNAME} or ${_CAPACITYCSVNAME}.`)
+    throw `There is no data in either ${_PRICESCSVNAME} or ${_CAPACITYCSVNAME}.`
+  }
+
+  if (prices.length !== capacities.length) { 
+    logError(`Number of lines in ${_PRICESCSVNAME} and ${_CAPACITYCSVNAME} are different!`)
+    throw `Number of lines in ${_PRICESCSVNAME} and ${_CAPACITYCSVNAME} are different!`
+  }
+
+  if (Object.keys(prices[0].companies).length !== Object.keys(capacities[0].companies).length) {
+    logError(`Number of companies in ${_PRICESCSVNAME} and ${_CAPACITYCSVNAME} are different!`)
+    throw `Number of companies in ${_PRICESCSVNAME} and ${_CAPACITYCSVNAME} are different!`
+  }
+
+  let headers = Object.keys(prices[0].companies)
+  console.log(headers)
+  let sorted = [] as data[]
+
+  for (let i=0; i<prices.length; i++) {
+    if (Object.keys(prices[i].companies).length !== headers.length) {
+      logError(`There are more companies on row ${i+1} in ${_PRICESCSVNAME} than in the header.`)
+      throw `There are more companies on row ${i+1} in ${_PRICESCSVNAME} than in the header.`
+    }
+
+    if (Object.keys(capacities[i].companies).length !== headers.length) {
+      logError(`There are more companies on row ${i+1} in ${_CAPACITYCSVNAME} than in the header.`)
+      throw `There are more companies on row ${i+1} in ${_CAPACITYCSVNAME} than in the header.`
+    }
+
+    for (let company of headers) {
+      let price = prices[i].companies[company]
+      let capacity = capacities[i].companies[company]
+
+      if ( !(_NULLVALS.includes(price) || _NULLVALS.includes(capacity)) ) {
+        let priceValue = parseFloat(price)
+        let capacityValue = parseInt(capacity)
+
+        if (!Number.isNaN(price) && !Number.isNaN(capacity))
+          sorted = insertion(sorted, company, prices[i].lane, { price: priceValue, capacity: capacityValue } as item)
+        else throw `cell(${i}, ${company}) has price "${price}" and capacity "${capacity}". One of which is "Not A Number".`
+      } else logWarn(`Acceptable null value found in cell(${i}, ${company}). skipping ..`)
+    }
+  }
+
+  return sorted
+}
+
+/**
+ * CSV Reader for logistics algorithm.
+ * Sorts the data from lowest price to highest price.
  * @param {*} priceCSV 
  * @param {*} capacityCSV 
  */
-export function csvReader(priceCSV: string, capacityCSV: string) {
+export function csvReader(priceCSV: string, capacityCSV: string): data[] {
   var priceLines = priceCSV.split("\n")
   var capacityLines = capacityCSV.split("\n")
 
@@ -27,7 +85,6 @@ export function csvReader(priceCSV: string, capacityCSV: string) {
     if (priceLine[0] !== capacityLine[0]) 
       throw `${_PRICESCSVNAME} contains lane "${priceLine[0]}" in row ${i}, but ${_CAPACITYCSVNAME} contains lane "${capacityLines[0]}" instead. Please make them the same.`
 
-    console.log()
     if (priceLine.length !== headers.length || capacityLine.length !== headers.length)
       throw `${_PRICESCSVNAME} or ${_CAPACITYCSVNAME} do not contain the same number of cells as the header on row ${i}. ${priceLine.length}, ${capacityLine.length} respectively.`
 
@@ -54,6 +111,38 @@ export function csvReader(priceCSV: string, capacityCSV: string) {
   }
 
   return sorted
+}
+
+/**
+ * CSV Reader for tables. Raw can be prices.csv / capacity.csv
+ * AKA: value is not specific
+ * @param raw 
+ */
+export function csvToRowData(raw: string): rowData[] {
+  let rawRows = raw.split("\n")
+
+  var headers = rawRows[0].split(",")
+  headers.shift()
+  for (let i=0; i<headers.length; i++) { headers[i] = removeQuotes(headers[i])}
+  console.log(headers)
+
+  let rows = [] as rowData[]
+  for (let i=1; i<rawRows.length; i++) {
+    let rowdata = rawRows[i].split(",")
+    let data = {
+      lane: removeQuotes(rowdata[0]),
+      companies: {} as {[company: string]: string}
+    }
+
+    for (let j=1; j<rowdata.length; j++) {
+      let company = removeQuotes(headers[j-1])
+      data.companies[company] = removeQuotes(rowdata[j])
+    }
+
+    rows.push(data)
+  }
+
+  return rows
 }
 
 const removeQuotes = (cell: string): string => {

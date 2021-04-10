@@ -32,6 +32,7 @@ export interface DenseAppBarProps {
   page: String,
   goToHome: () => void
   goToCapacity: () => void
+  goToPrices: () => void
   goToSettings: () => void
   goToAbout: () => void
 
@@ -40,7 +41,7 @@ export interface DenseAppBarProps {
 }
 
 export default function DenseAppBar({
-    page, goToHome, goToCapacity, goToSettings, goToAbout,
+    page, goToHome, goToCapacity, goToSettings, goToAbout, goToPrices,
     showPrice, showCapacity
 }: DenseAppBarProps) {
   const classes = useStyles()
@@ -55,7 +56,7 @@ export default function DenseAppBar({
             <HomeIcon />
           </IconButton>
           <Typography variant="h6" color="inherit" style={{fontFamily: "FedokaOne"}}>
-            Logistical.ly <small style={{fontSize: 10, fontFamily: "Roboto"}}>by Dom</small>
+            Logistical.ly {/*<small style={{fontSize: 10, fontFamily: "Roboto"}}>by Dom</small>*/}
           </Typography>
           <div className={classes.grow} />
 
@@ -76,6 +77,7 @@ export default function DenseAppBar({
             size="small"
             className={classes.button}
             startIcon={<EditIcon />}
+            onClick={ goToPrices }
             disabled={!showPrice}
           >
             Prices
