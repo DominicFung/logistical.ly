@@ -26,11 +26,14 @@ npm run dev
 npm run build
 ```
 
-Run the following if icon or images change.
+Run the following if icon or images change (OS MATTERS).
 ```sh
-npm run build-electron
+npm run build-electron-win
+npm run build-electron-mac
 ```
 
+Package the app.
 ```sh
-npm run package
+npm run package-win
+npm run package-mac
 ```

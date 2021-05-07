@@ -38,7 +38,7 @@
       "buildResources": "build"
     }
   },
-  "scripts": {
+  "scripts": { 
     "start": "react-scripts start",
     "ebuild": "npm run build && node_modules/.bin/build",
     "dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
@@ -46,8 +46,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build-electron-mac": "mkdir -p build/src && cp -r src/img/. build/src/img && cp -r src/icons/. build/",
-    "build-electron-windows": "",
-    "package": "electron-builder build --mac --win --publish never"
+    "build-electron-win": "mkdir build\\src && xcopy src\\img\\ build\\src\\img\\ /E/H && xcopy src\\icons\\ build\\ /E/H",
+    "package-win": "electron-builder build --win --publish never",
+    "package-mac": "electron-builder build --mac --publish never"
   },
   "eslintConfig": {
     "extends": [
