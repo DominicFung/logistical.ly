@@ -21,6 +21,11 @@ npm run dev
      alt="Screenshot of Logistical.ly" width="830" height="456">
 </p>
 
+<p align="center">
+<img src="https://github.com/DominicFung/logistical.ly/blob/master/src/img/screen-shot-win.png?raw=true" align="center"
+     alt="Screenshot of Logistical.ly" width="830" height="456">
+</p>
+
 ## To Build:
 ```sh
 npm run build
