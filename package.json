@@ -2,7 +2,7 @@
   "name": "logistical.ly",
   "author": "Dom Fung",
   "homepage": "./",
-  "main": "./electron/main.js",
+  "main": "./public/electron.js", 
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -45,7 +45,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build-electron": "mkdir -p build/src && cp -r src/img/. build/src/img && cp -r src/icons/. build/",
+    "build-electron-mac": "mkdir -p build/src && cp -r src/img/. build/src/img && cp -r src/icons/. build/",
+    "build-electron-windows": "",
     "package": "electron-builder build --mac --win --publish never"
   },
   "eslintConfig": {
